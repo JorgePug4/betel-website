@@ -17,13 +17,13 @@ const IndexPage: React.FC<PageProps> = () => {
   return (
     <Layout>
       <Hero />
+      <Events />
       <About />
       <Identity />
       <BibleBase />
       <Mission />
       <Vision />
       <Gallery />
-      <Events />
       <Contact />
     </Layout>
   );

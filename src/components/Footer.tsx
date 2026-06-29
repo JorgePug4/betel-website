@@ -5,11 +5,9 @@ import {
   FaYoutube,
   FaTiktok,
   FaWhatsapp,
-  FaEnvelope,
-  FaMapMarkerAlt,
 } from "react-icons/fa";
 import BrandLogo from "@components/BrandLogo";
-import { SITE, NAV_LINKS } from "@utils/constants";
+import { SITE } from "@utils/constants";
 
 const socials = [
   { icon: FaInstagram, href: SITE.social.instagram, label: "Instagram" },
@@ -24,7 +22,7 @@ export const Footer: React.FC = () => {
   return (
     <footer className="relative overflow-hidden bg-surface-dark text-slate-300">
       <div className="absolute inset-0 bg-gradient-vision opacity-[0.12]" />
-      <div className="container-max relative grid gap-12 px-5 py-16 sm:px-8 md:grid-cols-2 lg:grid-cols-4 lg:px-12">
+      <div className="container-max relative grid gap-12 px-5 py-16 sm:px-8 md:grid-cols-2 lg:px-12">
         {/* Marca */}
         <div className="space-y-4">
           <div className="rounded-2xl bg-white/5 p-3 w-fit">
@@ -47,55 +45,6 @@ export const Footer: React.FC = () => {
               </a>
             ))}
           </div>
-        </div>
-
-        {/* Navegación */}
-        <div>
-          <h3 className="mb-4 font-display text-lg font-bold text-white">
-            Navegación
-          </h3>
-          <ul className="grid grid-cols-2 gap-2 text-sm">
-            {NAV_LINKS.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  className="text-slate-400 transition-colors hover:text-spirit"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Contacto */}
-        <div>
-          <h3 className="mb-4 font-display text-lg font-bold text-white">
-            Contacto
-          </h3>
-          <ul className="space-y-3 text-sm">
-            <li>
-              <a
-                href={`https://wa.me/${SITE.whatsapp}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 text-slate-400 transition-colors hover:text-hope"
-              >
-                <FaWhatsapp className="text-hope" /> {SITE.phone}
-              </a>
-            </li>
-            <li>
-              <a
-                href={`mailto:${SITE.email}`}
-                className="flex items-center gap-3 text-slate-400 transition-colors hover:text-spirit"
-              >
-                <FaEnvelope className="text-spirit" /> {SITE.email}
-              </a>
-            </li>
-            <li className="flex items-center gap-3 text-slate-400">
-              <FaMapMarkerAlt className="text-flame" /> {SITE.address}
-            </li>
-          </ul>
         </div>
 
         {/* Llamado */}

@@ -1,6 +1,12 @@
 import * as React from "react";
-import { motion } from "framer-motion";
-import { FaCalendarAlt, FaMapMarkerAlt, FaArrowRight } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaArrowRight,
+  FaInfoCircle,
+  FaTimes,
+} from "react-icons/fa";
 import SectionHeading from "@components/SectionHeading";
 import { EVENTS, SITE } from "@utils/constants";
 import { fadeUp, staggerContainer, viewport } from "@/animations/variants";
@@ -8,8 +14,33 @@ import { fadeUp, staggerContainer, viewport } from "@/animations/variants";
 const accents = ["bg-gradient-spirit", "bg-gradient-flame", "bg-gradient-hope"];
 
 export const Events: React.FC = () => {
+  // Imagen activa que se muestra en el modal de "Más información".
+  const [info, setInfo] = React.useState<{ url: string; name: string } | null>(
+    null,
+  );
+
+  // Cierra con Escape y bloquea el scroll mientras el modal está abierto.
+  React.useEffect(() => {
+    if (!info) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setInfo(null);
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [info]);
+
+  // Si no hay eventos, no se muestra la sección.
+  if (EVENTS.length === 0) return null;
+
   return (
     <section id="eventos" className="section-padding relative overflow-hidden">
+      {/* Hidden headings for SEO screen-reader access */}
+      <h1 className="sr-only">Eventos y Retiros - Betel</h1>
+      <h2 className="sr-only">Encuentros, retiros y eventos comunitarios</h2>
       <div className="container-max">
         <SectionHeading
           eyebrow="Eventos y Retiros"
@@ -66,21 +97,76 @@ export const Events: React.FC = () => {
                 <p className="flex-1 leading-relaxed text-slate-600 dark:text-slate-300">
                   {event.description}
                 </p>
-                <a
-                  href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
-                    `Hola, quiero información sobre: ${event.name}`,
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-spirit transition-all hover:gap-3"
-                >
-                  Quiero participar <FaArrowRight />
-                </a>
+
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  {event.infoImage && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setInfo({ url: event.infoImage!, name: event.name })
+                      }
+                      className="inline-flex items-center gap-2 rounded-full bg-spirit/10 px-4 py-2 text-sm font-semibold text-spirit transition-colors hover:bg-spirit/20"
+                    >
+                      <FaInfoCircle /> Más información
+                    </button>
+                  )}
+                  <a
+                    href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
+                      `Hola, quiero información sobre: ${event.name}`,
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-spirit transition-all hover:gap-3"
+                  >
+                    Quiero participar <FaArrowRight />
+                  </a>
+                </div>
               </div>
             </motion.article>
           ))}
         </motion.div>
       </div>
+
+      {/* Modal con la imagen del evento */}
+      <AnimatePresence>
+        {info && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setInfo(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={info.name}
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
+          >
+            <button
+              onClick={() => setInfo(null)}
+              aria-label="Cerrar"
+              className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+            >
+              <FaTimes />
+            </button>
+            <motion.figure
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-[88vh] max-w-3xl"
+            >
+              <img
+                src={info.url}
+                alt={info.name}
+                decoding="async"
+                className="max-h-[80vh] w-auto rounded-2xl object-contain shadow-2xl"
+              />
+              <figcaption className="mt-4 text-center text-white/90">
+                {info.name}
+              </figcaption>
+            </motion.figure>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

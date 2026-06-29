@@ -20,6 +20,8 @@ export interface CommunityEvent {
   location: string;
   description: string;
   imageUrl?: string;
+  /** Imagen que se despliega al pulsar "Más información" (ruta o URL). */
+  infoImage?: string;
   /** Fecha ISO 8601 (ej. "2026-03-14T09:00") para datos estructurados de Google. */
   startDate?: string;
   endDate?: string;

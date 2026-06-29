@@ -106,22 +106,6 @@ export const Contact: React.FC = () => {
                     </span>
                   </a>
                 </li>
-                <li>
-                  <a
-                    href={`mailto:${SITE.email}`}
-                    className="flex items-center gap-4 transition-opacity hover:opacity-80"
-                  >
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
-                      <FaEnvelope />
-                    </span>
-                    <span>
-                      <span className="block text-xs uppercase tracking-wide text-white/60">
-                        Correo
-                      </span>
-                      {SITE.email}
-                    </span>
-                  </a>
-                </li>
                 <li className="flex items-center gap-4">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
                     <FaMapMarkerAlt />

@@ -22,6 +22,9 @@ export const Gallery: React.FC = () => {
   const images = GALLERY_IMAGES;
   const hasRealImages = images.some((img) => img.imageUrl);
 
+  // Si no hay imágenes en la galería, no se muestra la sección.
+  if (images.length === 0) return null;
+
   return (
     <section
       id="galeria"

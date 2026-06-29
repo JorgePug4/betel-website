@@ -22,7 +22,6 @@ export const SITE = {
   name: "Comunidad Bet-el Casa Abierta",
   shortName: "Bet-el",
   slogan: "Proclamamos, formamos y caminamos con Cristo",
-  email: "contacto@comunidadbetel.org",
   phone: "+52 5545436232",
   whatsapp: "+52 5545436232",
   address: "CDMX, México",
@@ -136,13 +135,13 @@ export const TESTIMONIALS: Testimonial[] = [
 // (por ejemplo "/images/gallery/retiro-2026.jpg").
 // Si `imageUrl` queda vacío se muestra un marcador de color con degradado.
 export const GALLERY_IMAGES: GalleryImage[] = [
-  { id: "1", title: "Retiro de jóvenes", imageUrl: "https://scontent.fmex26-1.fna.fbcdn.net/v/t39.30808-6/732908711_122106492441364093_6256236769554845915_n.jpg?stp=dst-jpg_tt6&cstp=mx1080x1350&ctp=s1080x1350&_nc_cat=100&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFwPEBL-4dThCBLDTcRa4i-JRQGUg6TxLglFAZSDpPEuPZtub4xQ12iww5-rmHzofwJfyWwFiPmG9M_PJMt6FH9&_nc_ohc=QgsFP7Bj3PgQ7kNvwFDmmW8&_nc_oc=AdodsjECaLoJgfZ0ovfSQybK0eRhghghEw2OoEzeY0ehkrUPigukV7_NO37fIsggzzHRXLPS6gq4nuWj8c5GcyMY&_nc_zt=23&_nc_ht=scontent.fmex26-1.fna&_nc_gid=3fTxNTr6NuuNRRJ2aqU28A&_nc_ss=7b2a8&oh=00_Af_maCh6LkY4NmTc5SGrvadNVOcxsxrJYVO-kJjhTbfF1Q&oe=6A47994D" }
+  
 ];
 
 // Próximo retiro destacado (se promociona en el Hero).
 export const NEXT_RETREAT = {
-  title: "Retiro de Jóvenes “Encuentro”",
-  date: "Próximamente 2026",
+  title: "Retiro de Jóvenes",
+  date: "30 de julio al 01 de agosto de 2026",
   href: "#eventos",
 };
 
@@ -151,25 +150,21 @@ export const EVENTS: CommunityEvent[] = [
   {
     id: "1",
     name: "Retiro de Jóvenes 'Encuentro'",
-    date: "Próximamente 2026",
-    location: "Casa de Retiros, Lima",
+    date: "30 de julio al 01 de agosto de 2026",
+    location: "CDMX, México zona sur Alvaro Obregón",
     description:
       "Un fin de semana para tener un encuentro personal con Jesús a través del Kerigma, la oración y la comunidad.",
-  },
-  {
-    id: "2",
-    name: "Noche de Adoración",
-    date: "Cada último viernes",
-    location: "Local de la comunidad",
-    description:
-      "Una noche de alabanza, adoración y palabra para renovar nuestra fe y crecer juntos en el Espíritu.",
-  },
-  {
-    id: "3",
-    name: "Formación de Discípulos",
-    date: "Inscripciones abiertas",
-    location: "Modalidad presencial",
-    description:
-      "Espacios de formación continua para profundizar en la fe y vivir conforme a las enseñanzas de Cristo.",
+    // Imagen (flyer/cartel) que se despliega con el botón "Más información".
+    // Coloca el archivo en `static/images/events/` y referencia su ruta.
+    imageUrl: "/images/events/encuentro.png",
+    infoImage: "/images/events/propaganda_retiro.jpg"
   },
 ];
+
+// Enlaces de navegación visibles: oculta las secciones vacías
+// (galería sin imágenes / eventos sin elementos).
+export const VISIBLE_NAV_LINKS: NavLink[] = NAV_LINKS.filter((link) => {
+  if (link.href === "#galeria" && GALLERY_IMAGES.length === 0) return false;
+  if (link.href === "#eventos" && EVENTS.length === 0) return false;
+  return true;
+});
