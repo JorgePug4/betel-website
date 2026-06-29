@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: 255 255 255;
+    --color-text: 10 22 40;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-surface-light text-surface-dark font-sans transition-colors duration-500;
+  }
+
+  .dark body {
+    @apply bg-surface-dark text-slate-100;
+  }
+
+  /* Respeta usuarios que prefieren menos movimiento */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Foco accesible visible */
+  :focus-visible {
+    @apply outline-none ring-2 ring-spirit ring-offset-2 ring-offset-transparent;
+  }
+
+  ::selection {
+    @apply bg-spirit/30 text-surface-dark dark:text-white;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-glass;
+  }
+
+  .glass-light {
+    @apply bg-white/70 dark:bg-surface-dark-soft/60 backdrop-blur-lg border border-white/40 dark:border-white/10;
+  }
+
+  .text-gradient-spirit {
+    @apply bg-gradient-spirit bg-clip-text text-transparent;
+  }
+
+  .text-gradient-flame {
+    @apply bg-gradient-flame bg-clip-text text-transparent;
+  }
+
+  .text-gradient-vision {
+    @apply bg-gradient-vision bg-clip-text text-transparent;
+  }
+
+  .section-padding {
+    @apply px-5 py-20 sm:px-8 md:px-12 lg:px-20 md:py-28;
+  }
+
+  .container-max {
+    @apply mx-auto w-full max-w-7xl;
+  }
+
+  .heading-xl {
+    @apply font-display font-extrabold leading-[1.05] tracking-tight;
+  }
+}
+
+@layer utilities {
+  .bg-grid {
+    background-image: linear-gradient(
+        rgba(0, 174, 239, 0.07) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgba(0, 174, 239, 0.07) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .perspective {
+    perspective: 1000px;
+  }
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00aeef, #005b9a);
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00aeef, #ff7a00);
+}

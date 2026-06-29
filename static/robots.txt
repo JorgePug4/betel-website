@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://comunidadbetel.org/sitemap/sitemap-index.xml
