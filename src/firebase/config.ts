@@ -1,5 +1,11 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import {
+  getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  type Firestore,
+} from "firebase/firestore";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 /**
@@ -29,7 +35,26 @@ let storageInstance: FirebaseStorage | null = null;
 
 if (isFirebaseConfigured) {
   app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-  dbInstance = getFirestore(app);
+
+  // En el navegador: caché persistente en IndexedDB (multi-pestaña).
+  // Con onSnapshot, las lecturas se sirven primero desde esta caché local
+  // (0 lecturas de cuota) y luego se sincronizan con el servidor en tiempo real.
+  // En SSR/build (sin IndexedDB) se usa la instancia en memoria.
+  if (typeof window !== "undefined") {
+    try {
+      dbInstance = initializeFirestore(app, {
+        localCache: persistentLocalCache({
+          tabManager: persistentMultipleTabManager(),
+        }),
+      });
+    } catch {
+      // Ya inicializado o IndexedDB no disponible (ej. modo privado).
+      dbInstance = getFirestore(app);
+    }
+  } else {
+    dbInstance = getFirestore(app);
+  }
+
   storageInstance = getStorage(app);
 }
 

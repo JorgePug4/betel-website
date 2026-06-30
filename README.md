@@ -135,3 +135,8 @@ src/
 ---
 
 Hecho con fe para la **Comunidad Bet-el Casa Abierta**. 🕊️🔥✝️
+
+
+---------------------------------DEPLOY-----------------------------------------------
+npm run build
+npx firebase-tools deploy 
