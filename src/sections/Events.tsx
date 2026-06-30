@@ -6,6 +6,7 @@ import {
   FaArrowRight,
   FaInfoCircle,
   FaTimes,
+  FaMapMarkedAlt,
 } from "react-icons/fa";
 import SectionHeading from "@components/SectionHeading";
 import { CardsSkeleton, ErrorState } from "@components/StateViews";
@@ -14,6 +15,23 @@ import { useContent } from "@/context/ContentContext";
 import { fadeUp, staggerContainer, viewport } from "@/animations/variants";
 
 const accents = ["bg-gradient-spirit", "bg-gradient-flame", "bg-gradient-hope"];
+
+/**
+ * Devuelve el enlace de Google Maps de un evento, o null si no hay datos.
+ * Prioriza `mapUrl` (link completo); si no, construye la búsqueda con `mapQuery`.
+ */
+function getMapsHref(event: {
+  mapUrl?: string;
+  mapQuery?: string;
+}): string | null {
+  if (event.mapUrl && event.mapUrl.trim()) return event.mapUrl.trim();
+  if (event.mapQuery && event.mapQuery.trim()) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      event.mapQuery.trim(),
+    )}`;
+  }
+  return null;
+}
 
 export const Events: React.FC = () => {
   const { events, retry } = useContent();
@@ -114,6 +132,16 @@ export const Events: React.FC = () => {
                       >
                         <FaInfoCircle /> Más información
                       </button>
+                    )}
+                    {getMapsHref(event) && (
+                      <a
+                        href={getMapsHref(event)!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full bg-hope/10 px-4 py-2 text-sm font-semibold text-hope-life transition-colors hover:bg-hope/20"
+                      >
+                        <FaMapMarkedAlt /> Ver en mapa
+                      </a>
                     )}
                     <a
                       href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(

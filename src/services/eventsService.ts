@@ -51,6 +51,8 @@ export function subscribeEvents(
               description: data.description,
               imageUrl,
               infoImage,
+              mapUrl: data.mapUrl,
+              mapQuery: data.mapQuery,
               startDate: data.startDate,
               endDate: data.endDate,
             } satisfies CommunityEvent;

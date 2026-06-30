@@ -149,6 +149,8 @@ Firestore actualiza la web al instante**, sin redeploy.
   "description": "Un fin de semana para tener un encuentro personal con Jesús a través del Kerigma, la oración y la comunidad.",
   "imagePath": "events/encuentro-portada.jpg",
   "infoImagePath": "events/encuentro-flyer.jpg",
+  "mapUrl": "https://maps.app.goo.gl/xxxxxxxx",
+  "mapQuery": "Casa de Retiros, Álvaro Obregón, CDMX",
   "order": 1,
   "active": true,
   "startDate": "2026-07-30T18:00",

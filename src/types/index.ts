@@ -27,6 +27,10 @@ export interface CommunityEvent {
   imageUrl?: string;
   /** Imagen (flyer) que se despliega al pulsar "Más información". */
   infoImage?: string;
+  /** URL completa de Google Maps (tiene prioridad si está presente). */
+  mapUrl?: string;
+  /** Dirección/consulta para abrir en Google Maps si no hay mapUrl. */
+  mapQuery?: string;
   /** Fecha ISO 8601 (ej. "2026-03-14T09:00") para datos estructurados de Google. */
   startDate?: string;
   endDate?: string;
@@ -65,6 +69,10 @@ export interface EventDoc {
   imagePath?: string;
   /** Ruta en Storage del flyer de "Más información". */
   infoImagePath?: string;
+  /** URL completa de Google Maps (opcional). */
+  mapUrl?: string;
+  /** Dirección/consulta para Google Maps (opcional). */
+  mapQuery?: string;
   order?: number;
   active?: boolean;
   startDate?: string;
