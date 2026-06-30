@@ -1,0 +1,46 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Solo usuarios autenticados (panel admin) pueden escribir contenido.
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Eventos: lectura pública, escritura solo admin.
+    match /events/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Galería: lectura pública, escritura solo admin.
+    match /gallery/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Configuración del sitio (incluye el documento "nextRetreat"):
+    // lectura pública para reflejar cambios en tiempo real; escritura solo admin.
+    match /siteConfig/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Mensajes de contacto: cualquiera puede crear (con validación);
+    // solo el admin puede leer/editar/eliminar.
+    match /contactMessages/{id} {
+      allow create: if
+        request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.email is string
+        && request.resource.data.email.matches('^[^@]+@[^@]+\\.[^@]+$')
+        && request.resource.data.phone is string
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0
+        && request.resource.data.message.size() <= 2000;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

@@ -2377,11 +2377,6 @@ type WebPOptions = {
   readonly quality: InputMaybe<Scalars['Int']>;
 };
 
-type EventsJsonLdQueryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type EventsJsonLdQueryQuery = { readonly site: { readonly siteMetadata: { readonly siteUrl: string | null, readonly title: string | null } | null } | null };
-
 type GatsbyImageSharpFixedFragment = { readonly base64: string | null, readonly width: number, readonly height: number, readonly src: string, readonly srcSet: string };
 
 type GatsbyImageSharpFixed_noBase64Fragment = { readonly width: number, readonly height: number, readonly src: string, readonly srcSet: string };

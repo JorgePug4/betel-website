@@ -5,7 +5,8 @@ import { FaArrowRight, FaFireAlt, FaCalendarAlt, FaWhatsapp } from "react-icons/
 import ParticleBackground from "@components/ParticleBackground";
 import ScrollIndicator from "@components/ScrollIndicator";
 import Button from "@components/Button";
-import { SITE, NEXT_RETREAT } from "@utils/constants";
+import { SITE } from "@utils/constants";
+import { useNextRetreat } from "@/context/ContentContext";
 
 const container = {
   hidden: {},
@@ -24,6 +25,8 @@ const scrollTo = (sel: string) =>
   document.querySelector(sel)?.scrollIntoView({ behavior: "smooth" });
 
 export const Hero: React.FC = () => {
+  const { data: retreat } = useNextRetreat();
+
   return (
     <section
       id="inicio"
@@ -100,27 +103,29 @@ export const Hero: React.FC = () => {
           {SITE.slogan}
         </motion.p>
 
-        {/* Botón promocional del próximo retiro */}
-        <motion.button
-          variants={item}
-          onClick={() => scrollTo(NEXT_RETREAT.href)}
-          whileHover={{ y: -3 }}
-          whileTap={{ scale: 0.97 }}
-          className="group mt-9 flex items-center gap-3 rounded-2xl bg-gradient-flame px-5 py-3 text-left text-white shadow-glow-flame"
-        >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20">
-            <FaCalendarAlt className="text-lg" />
-          </span>
-          <span className="flex flex-col leading-tight">
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-white/80">
-              Próximo retiro · {NEXT_RETREAT.date}
+        {/* Botón promocional del próximo retiro (solo si existe en Firebase) */}
+        {retreat && (
+          <motion.button
+            variants={item}
+            onClick={() => scrollTo(retreat.href)}
+            whileHover={{ y: -3 }}
+            whileTap={{ scale: 0.97 }}
+            className="group mt-9 flex items-center gap-3 rounded-2xl bg-gradient-flame px-5 py-3 text-left text-white shadow-glow-flame"
+          >
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20">
+              <FaCalendarAlt className="text-lg" />
             </span>
-            <span className="font-display text-base font-bold">
-              {NEXT_RETREAT.title}
+            <span className="flex flex-col leading-tight">
+              <span className="text-[11px] font-semibold uppercase tracking-widest text-white/80">
+                Próximo retiro · {retreat.date}
+              </span>
+              <span className="font-display text-base font-bold">
+                {retreat.title}
+              </span>
             </span>
-          </span>
-          <FaArrowRight className="ml-1 transition-transform group-hover:translate-x-1" />
-        </motion.button>
+            <FaArrowRight className="ml-1 transition-transform group-hover:translate-x-1" />
+          </motion.button>
+        )}
 
         <motion.div
           variants={item}
@@ -132,16 +137,20 @@ export const Hero: React.FC = () => {
           >
             Conoce más
           </Button>
-          <Button
-            as="a"
-            variant="outline"
-            href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
-              `¡Hola! Quiero información sobre el ${NEXT_RETREAT.title}.`,
-            )}`}
-            icon={<FaWhatsapp />}
-          >
-            Inscríbete por WhatsApp
-          </Button>
+          {/* Botón de inscripción: visible/oculto en tiempo real según Firebase */}
+          {retreat?.showRegistrationButton && (
+            <Button
+              as="a"
+              variant="outline"
+              href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
+                retreat.whatsappText ||
+                  `¡Hola! Quiero inscribirme en el ${retreat.title}.`,
+              )}`}
+              icon={<FaWhatsapp />}
+            >
+              Inscríbete por WhatsApp
+            </Button>
+          )}
         </motion.div>
       </motion.div>
 

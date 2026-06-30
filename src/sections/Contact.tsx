@@ -10,17 +10,24 @@ import {
   FaWhatsapp,
   FaCheckCircle,
   FaMapMarkerAlt,
+  FaPaperPlane,
+  FaExclamationTriangle,
+  FaSpinner,
 } from "react-icons/fa";
 import SectionHeading from "@components/SectionHeading";
 import { contactSchema, type ContactFormData } from "@utils/validation";
 import { SITE } from "@utils/constants";
+import { sendContactMessage } from "@/services/contactService";
 import { fadeLeft, fadeRight, viewport } from "@/animations/variants";
+
+type Status = "idle" | "loading" | "success" | "error";
 
 const inputBase =
   "peer w-full rounded-xl border border-black/10 bg-white/70 py-3.5 pl-11 pr-4 text-surface-dark outline-none transition-all placeholder:text-slate-400 focus:border-spirit focus:ring-2 focus:ring-spirit/30 dark:border-white/10 dark:bg-white/5 dark:text-white";
 
 export const Contact: React.FC = () => {
-  const [sent, setSent] = React.useState(false);
+  const [status, setStatus] = React.useState<Status>("idle");
+  const [serverError, setServerError] = React.useState("");
 
   const {
     register,
@@ -32,24 +39,23 @@ export const Contact: React.FC = () => {
     mode: "onBlur",
   });
 
-  // Sin backend: el mensaje se envía por WhatsApp con los datos del formulario.
-  const onSubmit = (data: ContactFormData) => {
-    const text = [
-      "¡Hola! Quiero unirme a la Comunidad Bet-el Casa Abierta.",
-      "",
-      `Nombre: ${data.name}`,
-      `Correo: ${data.email}`,
-      `Teléfono: ${data.phone}`,
-      "",
-      `Mensaje: ${data.message}`,
-    ].join("\n");
-
-    const url = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
-
-    setSent(true);
-    reset();
-    setTimeout(() => setSent(false), 6000);
+  // El mensaje se guarda en Firestore (colección contactMessages).
+  const onSubmit = async (data: ContactFormData) => {
+    setStatus("loading");
+    setServerError("");
+    try {
+      await sendContactMessage(data);
+      setStatus("success");
+      reset();
+      setTimeout(() => setStatus("idle"), 6000);
+    } catch (e) {
+      setStatus("error");
+      setServerError(
+        e instanceof Error
+          ? e.message
+          : "No se pudo enviar el mensaje. Inténtalo de nuevo.",
+      );
+    }
   };
 
   return (
@@ -210,20 +216,38 @@ export const Contact: React.FC = () => {
             {/* Botón */}
             <button
               type="submit"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-hope py-4 font-semibold text-white shadow-glow-hope transition-all hover:-translate-y-0.5"
+              disabled={status === "loading"}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-spirit py-4 font-semibold text-white shadow-glow transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              <FaWhatsapp className="text-lg" /> Enviar por WhatsApp
+              {status === "loading" ? (
+                <>
+                  <FaSpinner className="animate-spin" /> Enviando...
+                </>
+              ) : (
+                <>
+                  <FaPaperPlane /> Enviar mensaje
+                </>
+              )}
             </button>
 
-            {sent && (
+            {status === "success" && (
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-center gap-2 rounded-xl bg-hope/15 p-3 text-sm font-medium text-hope-life"
                 role="status"
               >
-                <FaCheckCircle /> Te redirigimos a WhatsApp para completar el
-                envío. ¡Gracias por escribirnos!
+                <FaCheckCircle /> ¡Mensaje enviado! Te responderemos pronto.
+              </motion.p>
+            )}
+            {status === "error" && (
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 rounded-xl bg-flame/15 p-3 text-sm font-medium text-flame-fire"
+                role="alert"
+              >
+                <FaExclamationTriangle /> {serverError}
               </motion.p>
             )}
           </motion.form>

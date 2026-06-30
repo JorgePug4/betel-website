@@ -8,18 +8,22 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import SectionHeading from "@components/SectionHeading";
-import { EVENTS, SITE } from "@utils/constants";
+import { CardsSkeleton, ErrorState } from "@components/StateViews";
+import { SITE } from "@utils/constants";
+import { useContent } from "@/context/ContentContext";
 import { fadeUp, staggerContainer, viewport } from "@/animations/variants";
 
 const accents = ["bg-gradient-spirit", "bg-gradient-flame", "bg-gradient-hope"];
 
 export const Events: React.FC = () => {
-  // Imagen activa que se muestra en el modal de "Más información".
+  const { events, retry } = useContent();
+  const { data, loading, error } = events;
+
+  // Imagen activa del modal "Más información".
   const [info, setInfo] = React.useState<{ url: string; name: string } | null>(
     null,
   );
 
-  // Cierra con Escape y bloquea el scroll mientras el modal está abierto.
   React.useEffect(() => {
     if (!info) return;
     const onKey = (e: KeyboardEvent) => {
@@ -33,14 +37,12 @@ export const Events: React.FC = () => {
     };
   }, [info]);
 
-  // Si no hay eventos, no se muestra la sección.
-  if (EVENTS.length === 0) return null;
+  // Oculta la sección solo cuando ya cargó sin errores y no hay eventos.
+  if (!loading && !error && data.length === 0) return null;
 
   return (
     <section id="eventos" className="section-padding relative overflow-hidden">
-      {/* Hidden headings for SEO screen-reader access */}
-      <h1 className="sr-only">Eventos y Retiros - Betel</h1>
-      <h2 className="sr-only">Encuentros, retiros y eventos comunitarios</h2>
+      <h2 className="sr-only">Eventos y retiros de la comunidad</h2>
       <div className="container-max">
         <SectionHeading
           eyebrow="Eventos y Retiros"
@@ -53,78 +55,82 @@ export const Events: React.FC = () => {
           subtitle="Espacios diseñados para que experimentes el amor de Dios y crezcas en comunidad."
         />
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewport}
-          className="mt-14 grid gap-7 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {EVENTS.map((event, i) => (
-            <motion.article
-              key={event.id}
-              variants={fadeUp}
-              whileHover={{ y: -8 }}
-              className="group flex flex-col overflow-hidden rounded-3xl border border-black/5 bg-white shadow-glass dark:border-white/10 dark:bg-surface-dark"
-            >
-              {/* Cabecera con acento de color o imagen */}
-              <div
-                className={`relative h-40 ${accents[i % accents.length]} overflow-hidden`}
+        {loading && <CardsSkeleton count={3} />}
+        {error && <ErrorState message={error} onRetry={retry} />}
+
+        {!loading && !error && (
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-14 grid gap-7 md:grid-cols-2 lg:grid-cols-3"
+          >
+            {data.map((event, i) => (
+              <motion.article
+                key={event.id}
+                variants={fadeUp}
+                whileHover={{ y: -8 }}
+                className="group flex flex-col overflow-hidden rounded-3xl border border-black/5 bg-white shadow-glass dark:border-white/10 dark:bg-surface-dark"
               >
-                {event.imageUrl && (
-                  <img
-                    src={event.imageUrl}
-                    alt={event.name}
-                    width={400}
-                    height={160}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-110"
-                  />
-                )}
-                <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/30 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
-                  <FaCalendarAlt /> {event.date}
-                </span>
-              </div>
-
-              <div className="flex flex-1 flex-col p-6">
-                <h3 className="mb-2 font-display text-xl font-bold text-surface-dark dark:text-white">
-                  {event.name}
-                </h3>
-                <p className="mb-3 inline-flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                  <FaMapMarkerAlt className="text-flame" /> {event.location}
-                </p>
-                <p className="flex-1 leading-relaxed text-slate-600 dark:text-slate-300">
-                  {event.description}
-                </p>
-
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  {event.infoImage && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setInfo({ url: event.infoImage!, name: event.name })
-                      }
-                      className="inline-flex items-center gap-2 rounded-full bg-spirit/10 px-4 py-2 text-sm font-semibold text-spirit transition-colors hover:bg-spirit/20"
-                    >
-                      <FaInfoCircle /> Más información
-                    </button>
+                <div
+                  className={`relative h-40 ${accents[i % accents.length]} overflow-hidden`}
+                >
+                  {event.imageUrl && (
+                    <img
+                      src={event.imageUrl}
+                      alt={event.name}
+                      width={400}
+                      height={160}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-110"
+                    />
                   )}
-                  <a
-                    href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
-                      `Hola, quiero información sobre: ${event.name}`,
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-spirit transition-all hover:gap-3"
-                  >
-                    Quiero participar <FaArrowRight />
-                  </a>
+                  <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/30 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+                    <FaCalendarAlt /> {event.date}
+                  </span>
                 </div>
-              </div>
-            </motion.article>
-          ))}
-        </motion.div>
+
+                <div className="flex flex-1 flex-col p-6">
+                  <h3 className="mb-2 font-display text-xl font-bold text-surface-dark dark:text-white">
+                    {event.name}
+                  </h3>
+                  <p className="mb-3 inline-flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                    <FaMapMarkerAlt className="text-flame" /> {event.location}
+                  </p>
+                  <p className="flex-1 leading-relaxed text-slate-600 dark:text-slate-300">
+                    {event.description}
+                  </p>
+
+                  <div className="mt-5 flex flex-wrap items-center gap-3">
+                    {event.infoImage && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setInfo({ url: event.infoImage!, name: event.name })
+                        }
+                        className="inline-flex items-center gap-2 rounded-full bg-spirit/10 px-4 py-2 text-sm font-semibold text-spirit transition-colors hover:bg-spirit/20"
+                      >
+                        <FaInfoCircle /> Más información
+                      </button>
+                    )}
+                    <a
+                      href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
+                        `Hola, quiero información sobre: ${event.name}`,
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-spirit transition-all hover:gap-3"
+                    >
+                      Quiero participar <FaArrowRight />
+                    </a>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </motion.div>
+        )}
       </div>
 
       {/* Modal con la imagen del evento */}

@@ -12,8 +12,6 @@ import { SITE } from "@utils/constants";
 const socials = [
   { icon: FaInstagram, href: SITE.social.instagram, label: "Instagram" },
   { icon: FaFacebookF, href: SITE.social.facebook, label: "Facebook" },
-  { icon: FaYoutube, href: SITE.social.youtube, label: "YouTube" },
-  { icon: FaTiktok, href: SITE.social.tiktok, label: "TikTok" },
 ];
 
 export const Footer: React.FC = () => {

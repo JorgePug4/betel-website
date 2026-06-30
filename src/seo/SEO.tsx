@@ -83,7 +83,6 @@ export const SEO: React.FC<SEOProps> = ({
         logo: `${meta.siteUrl}/icons/icon-512x512.png`,
         image: seo.image,
         description: meta.description,
-        email: SITE.email,
         telephone: SITE.phone,
         address: {
           "@type": "PostalAddress",
@@ -93,7 +92,6 @@ export const SEO: React.FC<SEOProps> = ({
           "@type": "ContactPoint",
           contactType: "customer support",
           telephone: SITE.phone,
-          email: SITE.email,
           availableLanguage: ["es"],
         },
         sameAs: Object.values(SITE.social),

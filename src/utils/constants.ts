@@ -14,8 +14,6 @@ import type {
   IdentityCard,
   MissionStep,
   Testimonial,
-  CommunityEvent,
-  GalleryImage,
 } from "@apptypes/index";
 
 export const SITE = {
@@ -26,10 +24,10 @@ export const SITE = {
   whatsapp: "+52 5545436232",
   address: "CDMX, México",
   social: {
-    instagram: "https://instagram.com/comunidadbetel",
-    facebook: "https://facebook.com/comunidadbetel",
-    youtube: "https://youtube.com/@comunidadbetel",
-    tiktok: "https://tiktok.com/@comunidadbetel",
+    instagram: "https://www.instagram.com/comunidadbetelcasa?igsh=MTVyOThkcG1zZ2tmbQ==",
+    facebook: "https://www.facebook.com/profile.php?id=61590922808349&locale=es_LA",
+    youtube: "",
+    tiktok: "",
   },
 };
 
@@ -129,42 +127,5 @@ export const TESTIMONIALS: Testimonial[] = [
       "El Kerigma me confrontó con el amor del Padre. Hoy quiero que más jóvenes vivan esta misma experiencia.",
   },
 ];
-
-// Galería estática.
-// Coloca tus fotos en `static/images/gallery/` y referencia la ruta en `imageUrl`
-// (por ejemplo "/images/gallery/retiro-2026.jpg").
-// Si `imageUrl` queda vacío se muestra un marcador de color con degradado.
-export const GALLERY_IMAGES: GalleryImage[] = [
-  
-];
-
-// Próximo retiro destacado (se promociona en el Hero).
-export const NEXT_RETREAT = {
-  title: "Retiro de Jóvenes",
-  date: "30 de julio al 01 de agosto de 2026",
-  href: "#eventos",
-};
-
-// Eventos estáticos.
-export const EVENTS: CommunityEvent[] = [
-  {
-    id: "1",
-    name: "Retiro de Jóvenes 'Encuentro'",
-    date: "30 de julio al 01 de agosto de 2026",
-    location: "CDMX, México zona sur Alvaro Obregón",
-    description:
-      "Un fin de semana para tener un encuentro personal con Jesús a través del Kerigma, la oración y la comunidad.",
-    // Imagen (flyer/cartel) que se despliega con el botón "Más información".
-    // Coloca el archivo en `static/images/events/` y referencia su ruta.
-    imageUrl: "/images/events/encuentro.png",
-    infoImage: "/images/events/propaganda_retiro.jpg"
-  },
-];
-
-// Enlaces de navegación visibles: oculta las secciones vacías
-// (galería sin imágenes / eventos sin elementos).
-export const VISIBLE_NAV_LINKS: NavLink[] = NAV_LINKS.filter((link) => {
-  if (link.href === "#galeria" && GALLERY_IMAGES.length === 0) return false;
-  if (link.href === "#eventos" && EVENTS.length === 0) return false;
-  return true;
-});
+// Nota: Eventos, Galería y Próximo Retiro ahora provienen de Firebase
+// (ver ContentProvider y la capa de servicios), no de datos estáticos.

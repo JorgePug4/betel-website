@@ -1,7 +1,8 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { VISIBLE_NAV_LINKS } from "@utils/constants";
+import { NAV_LINKS } from "@utils/constants";
+import { useContent } from "@/context/ContentContext";
 import BrandLogo from "@components/BrandLogo";
 import ThemeToggle from "@components/ThemeToggle";
 import Button from "@components/Button";
@@ -10,6 +11,30 @@ export const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [active, setActive] = React.useState<string>("#inicio");
+
+  const { events, gallery } = useContent();
+
+  // Oculta "Galería"/"Eventos" solo cuando ya cargó y no hay elementos
+  // (evita parpadeo mientras llega la data de Firebase).
+  const visibleLinks = React.useMemo(
+    () =>
+      NAV_LINKS.filter((link) => {
+        if (
+          link.href === "#galeria" &&
+          !gallery.loading &&
+          gallery.data.length === 0
+        )
+          return false;
+        if (
+          link.href === "#eventos" &&
+          !events.loading &&
+          events.data.length === 0
+        )
+          return false;
+        return true;
+      }),
+    [gallery.loading, gallery.data.length, events.loading, events.data.length],
+  );
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -20,7 +45,7 @@ export const Navbar: React.FC = () => {
 
   // Resalta el enlace activo según la sección visible
   React.useEffect(() => {
-    const ids = VISIBLE_NAV_LINKS.map((l) => l.href.replace("#", ""));
+    const ids = NAV_LINKS.map((l) => l.href.replace("#", ""));
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -69,7 +94,7 @@ export const Navbar: React.FC = () => {
 
         {/* Desktop */}
         <ul className="hidden items-center gap-1 lg:flex">
-          {VISIBLE_NAV_LINKS.map((link) => (
+          {visibleLinks.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
@@ -132,7 +157,7 @@ export const Navbar: React.FC = () => {
             className="overflow-hidden border-t border-black/5 dark:border-white/10 lg:hidden"
           >
             <ul className="container-max flex flex-col gap-1 px-5 pb-6 pt-4 sm:px-8">
-              {VISIBLE_NAV_LINKS.map((link) => (
+              {visibleLinks.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
