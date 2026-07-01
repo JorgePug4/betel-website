@@ -18,18 +18,23 @@ service firebase.storage {
       return request.auth != null;
     }
 
-    // Imágenes de contenido: lectura pública, escritura solo admin (imagen ≤ 5MB).
+    // Imágenes de contenido: lectura pública.
+    // create/update: solo autenticado + imagen ≤ 5MB.
+    // delete: solo autenticado (en borrado NO existe request.resource).
     match /events/{file=**} {
       allow read: if true;
-      allow write: if canWrite() && isImage() && underLimit();
+      allow create, update: if canWrite() && isImage() && underLimit();
+      allow delete: if canWrite();
     }
     match /gallery/{file=**} {
       allow read: if true;
-      allow write: if canWrite() && isImage() && underLimit();
+      allow create, update: if canWrite() && isImage() && underLimit();
+      allow delete: if canWrite();
     }
     match /siteConfig/{file=**} {
       allow read: if true;
-      allow write: if canWrite() && isImage() && underLimit();
+      allow create, update: if canWrite() && isImage() && underLimit();
+      allow delete: if canWrite();
     }
   }
 }
