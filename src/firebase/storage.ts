@@ -27,9 +27,17 @@ export async function resolveImageUrl(
 
   if (!storage) return undefined;
 
-  const url = await getDownloadURL(ref(storage, pathOrUrl));
-  urlCache.set(pathOrUrl, url);
-  return url;
+  // Resiliente: si la imagen no existe o falla, devolvemos undefined en lugar
+  // de lanzar (así un imagePath inválido NO rompe la carga de toda la lista).
+  try {
+    const url = await getDownloadURL(ref(storage, pathOrUrl));
+    urlCache.set(pathOrUrl, url);
+    return url;
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn(`[storage] No se pudo resolver "${pathOrUrl}":`, err);
+    return undefined;
+  }
 }
 
 /** Resuelve varias rutas en paralelo (reutiliza la caché). */

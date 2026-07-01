@@ -1,8 +1,6 @@
 import {
   collection,
   onSnapshot,
-  query,
-  orderBy,
   type Unsubscribe,
 } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "@/firebase/config";
@@ -10,6 +8,9 @@ import { resolveImageUrl } from "@/firebase/storage";
 import type { GalleryImage, GalleryDoc } from "@apptypes/index";
 
 const COLLECTION = "gallery";
+
+// Documentos sin "order" se colocan al final (en vez de excluirse).
+const orderOf = (o?: number) => (typeof o === "number" ? o : 9999);
 
 /**
  * Suscribe en tiempo real a las imágenes de la galería (activas y ordenadas).
@@ -24,17 +25,18 @@ export function subscribeGallery(
     return () => {};
   }
 
-  // Ordena por "order" (índice automático). El filtro de "active" es en cliente
-  // para evitar requerir un índice compuesto.
-  const q = query(collection(db, COLLECTION), orderBy("order", "asc"));
-
+  // Sin orderBy en la consulta: no se excluyen documentos sin "order".
   return onSnapshot(
-    q,
+    collection(db, COLLECTION),
     async (snapshot) => {
       try {
-        const activeDocs = snapshot.docs.filter(
-          (d) => (d.data() as GalleryDoc).active !== false,
-        );
+        const activeDocs = snapshot.docs
+          .filter((d) => (d.data() as GalleryDoc).active !== false)
+          .sort(
+            (a, b) =>
+              orderOf((a.data() as GalleryDoc).order) -
+              orderOf((b.data() as GalleryDoc).order),
+          );
         const images = await Promise.all(
           activeDocs.map(async (d) => {
             const data = d.data() as GalleryDoc;

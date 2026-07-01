@@ -9,22 +9,27 @@ service firebase.storage {
     function underLimit() {
       return request.resource.size < 5 * 1024 * 1024; // 5 MB
     }
-    function isAdmin() {
+    // Escritura permitida a cualquier usuario AUTENTICADO.
+    // (Storage no puede leer Firestore, por eso no se usa el doc admins/{uid}.)
+    // Para restringir SOLO a admins a nivel Storage, asigna el custom claim con
+    // scripts/set-admin-claim.js y cambia esta función por:
+    //   return request.auth != null && request.auth.token.admin == true;
+    function canWrite() {
       return request.auth != null;
     }
 
     // Imágenes de contenido: lectura pública, escritura solo admin (imagen ≤ 5MB).
     match /events/{file=**} {
       allow read: if true;
-      allow write: if isAdmin() && isImage() && underLimit();
+      allow write: if canWrite() && isImage() && underLimit();
     }
     match /gallery/{file=**} {
       allow read: if true;
-      allow write: if isAdmin() && isImage() && underLimit();
+      allow write: if canWrite() && isImage() && underLimit();
     }
     match /siteConfig/{file=**} {
       allow read: if true;
-      allow write: if isAdmin() && isImage() && underLimit();
+      allow write: if canWrite() && isImage() && underLimit();
     }
   }
 }

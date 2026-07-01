@@ -1,10 +1,12 @@
 import * as React from "react";
+import { Link } from "gatsby";
 import {
   FaInstagram,
   FaFacebookF,
   FaYoutube,
   FaTiktok,
   FaWhatsapp,
+  FaLock,
 } from "react-icons/fa";
 import BrandLogo from "@components/BrandLogo";
 import { SITE } from "@utils/constants";
@@ -21,7 +23,7 @@ export const Footer: React.FC = () => {
     <footer className="relative overflow-hidden bg-surface-dark text-slate-300">
       <div className="absolute inset-0 bg-gradient-vision opacity-[0.12]" />
       <div className="container-max relative grid gap-12 px-5 py-16 sm:px-8 md:grid-cols-2 lg:px-12">
-        {/* Marca */}
+       
         <div className="space-y-4">
           <div className="rounded-2xl bg-white/5 p-3 w-fit">
             <BrandLogo />
@@ -43,6 +45,16 @@ export const Footer: React.FC = () => {
               </a>
             ))}
           </div>
+
+          {/* Acceso discreto de administración */}
+          <Link
+            to="/admin"
+            aria-label="Acceso de administración"
+            title="Administración"
+            className="inline-flex items-center gap-1.5 pt-1 text-xs text-slate-600 transition-colors hover:text-spirit"
+          >
+            <FaLock className="text-[10px]" /> Administración
+          </Link>
         </div>
 
         {/* Llamado */}
@@ -69,7 +81,10 @@ export const Footer: React.FC = () => {
           <p>
             © {year} {SITE.name}. Todos los derechos reservados.
           </p>
-          <p className="text-gradient-spirit font-medium">{SITE.slogan}</p>
+          <div className="flex items-center gap-4">
+            <p className="text-gradient-spirit font-medium">{SITE.slogan}</p>
+            
+          </div>
         </div>
       </div>
     </footer>

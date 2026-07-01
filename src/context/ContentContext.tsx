@@ -61,7 +61,7 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({
     () => ({ events, gallery, nextRetreat, retry }),
     [events, gallery, nextRetreat, retry],
   );
-
+  console.log(value)
   return (
     <ContentContext.Provider value={value}>{children}</ContentContext.Provider>
   );
