@@ -1,8 +1,9 @@
 import * as React from "react";
 import { motion } from "framer-motion";
-import { FaTimes, FaSpinner, FaUpload, FaSave } from "react-icons/fa";
+import { FaTimes, FaSpinner, FaUpload, FaSave, FaImages } from "react-icons/fa";
 import type { FieldConfig } from "@/admin/collections.config";
 import { storageAdminService } from "@/services/storageAdminService";
+import { StorageImagePicker } from "@/admin/components/StorageImagePicker";
 import { useToast } from "@/admin/components/Toast";
 
 type Values = Record<string, unknown>;
@@ -40,6 +41,10 @@ export const DocumentForm: React.FC<Props> = ({
   const [uploading, setUploading] = React.useState<string | null>(null);
   const [progress, setProgress] = React.useState(0);
   const [saving, setSaving] = React.useState(false);
+  // Campo de imagen cuyo selector de imágenes existentes está abierto.
+  const [pickerField, setPickerField] = React.useState<FieldConfig | null>(
+    null,
+  );
 
   const setField = (key: string, value: unknown) =>
     setValues((v) => ({ ...v, [key]: value }));
@@ -199,7 +204,7 @@ export const DocumentForm: React.FC<Props> = ({
                     placeholder="ruta/en/storage.jpg o URL"
                     className={inputClass}
                   />
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-spirit/10 px-3 py-1.5 text-xs font-semibold text-spirit">
                       <FaUpload />
                       Subir imagen
@@ -213,6 +218,13 @@ export const DocumentForm: React.FC<Props> = ({
                         }}
                       />
                     </label>
+                    <button
+                      type="button"
+                      onClick={() => setPickerField(f)}
+                      className="inline-flex items-center gap-2 rounded-full bg-hope/10 px-3 py-1.5 text-xs font-semibold text-hope-life transition-colors hover:bg-hope/20"
+                    >
+                      <FaImages /> Elegir existente
+                    </button>
                     {uploading === f.key && (
                       <span className="text-xs text-slate-500">
                         Subiendo… {progress}%
@@ -255,6 +267,19 @@ export const DocumentForm: React.FC<Props> = ({
             Guardar
           </button>
         </div>
+
+        {/* Selector de imágenes ya subidas a Storage */}
+        {pickerField?.storageFolder && (
+          <StorageImagePicker
+            folder={pickerField.storageFolder}
+            selectedPath={String(values[pickerField.key] ?? "")}
+            onSelect={(fullPath) => {
+              setField(pickerField.key, fullPath);
+              setPickerField(null);
+            }}
+            onClose={() => setPickerField(null)}
+          />
+        )}
       </motion.form>
     </div>
   );
